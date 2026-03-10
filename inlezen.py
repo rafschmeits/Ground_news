@@ -27,7 +27,7 @@ for feed_url in rss_feeds:
 
     feed = feedparser.parse(feed_url)
 
-    for entry in feed.entries[:5]:
+    for entry in feed.entries[:50]:  #aantal artikels die hij pakt per nieuws outlet
 
         data = {
             "title": entry.title,
@@ -39,4 +39,37 @@ for feed_url in rss_feeds:
 
         articles.append(data)
 
-print(articles)
+texts = [
+article["title"] + " " + article["text"]
+for article in articles
+]
+
+from sentence_transformers import SentenceTransformer
+model = SentenceTransformer("all-MiniLM-L6-v2")
+embeddings = model.encode(texts)
+
+from sklearn.cluster import DBSCAN
+clustering = DBSCAN(
+    eps=0.25,        # gevoeligheid van clusters
+    min_samples=2,
+    metric="cosine"
+).fit(embeddings)
+labels = clustering.labels_
+
+clusters = {}
+
+for label, article in zip(labels, articles):
+
+    if label == -1:
+        continue
+
+    clusters.setdefault(label, []).append(article)
+
+for cluster_id, items in clusters.items():
+
+    print("\nSTORY", cluster_id)
+
+    for a in items:
+        print("-", a["source"], ":", a["title"])
+
+
