@@ -1,24 +1,26 @@
-data_set_nieuwsoutlets = [['nu.nl', 'https://www.nu.nl/', 'Centraal'], 
-['Nos', 'https://nos.nl/', 'Centraal'], 
-['Telegraaf', 'https://www.telegraaf.nl/', 'Rechts'],
-['Volkskrant', 'https://www.volkskrant.nl/', 'Links'],
-['AD', 'https://www.ad.nl/', 'Centraal'],
-['Trouw', 'https://www.trouw.nl/', 'Links'],
-['Parool', 'https://www.parool.nl/', 'Links'],
-['NRC', 'https://www.nrc.nl/', 'Rechts'],
-['RTL Nieuws', 'https://www.rtl.nl/', 'Centraal'],
-['Eenvandaag', 'https://eenvandaag.avrotros.nl/', 'Centraal'],
-['BNR', 'https://www.bnr.nl/', 'Rechts'],
-['metronieuws', 'https://www.metronieuws.nl/', 'Centraal'],
-['Nederlands Dagblad', 'https://www.nd.nl/', 'Rechts']]
-
-
+outlet_bias = {
+    "NU": "Centraal",
+    "Nos": "Centraal",
+    "Telegraaf": "Rechts",
+    "Volkskrant": "Links",
+    "AD:home": "Centraal",
+    "Trouw": "Links",
+    "Parool": "Links",
+    "NRC": "Rechts",
+    "RTL Nieuws": "Centraal",
+    "Eenvandaag": "Centraal",
+    "bnr - Home": "Rechts",
+    "metronieuws": "Centraal",
+    "Nederlands Dagblad": "Rechts"
+}
 
 rss_feeds = ['https://www.nu.nl/rss', 
              'https://www.volkskrant.nl/voorpagina/rss.xml',
              'https://www.parool.nl/voorpagina/rss.xml', 
              'https://www.ad.nl/home/rss.xml', 
-             'https://www.bnr.nl/?widget=rssfeed']
+             'https://www.bnr.nl/?widget=rssfeed',
+             'https://www.telegraaf.nl/rss/',
+             'https://feeds.feedburner.com/nrc/FmXV']
 
 articles = []
 
@@ -27,7 +29,7 @@ for feed_url in rss_feeds:
 
     feed = feedparser.parse(feed_url)
 
-    for entry in feed.entries[:50]:  #aantal artikels die hij pakt per nieuws outlet
+    for entry in feed.entries[:100]:  #aantal artikels die hij pakt per nieuws outlet
 
         data = {
             "title": entry.title,
@@ -67,9 +69,26 @@ for label, article in zip(labels, articles):
 
 for cluster_id, items in clusters.items():
 
+    links = 0
+    rechts = 0
+    centraal = 0
+
     print("\nSTORY", cluster_id)
 
     for a in items:
-        print("-", a["source"], ":", a["title"])
+
+        source = a["source"]
+        print("-", source, ":", a["title"])
+
+        bias = outlet_bias.get(source)
+
+        if bias == "Links":
+            links += 1
+        elif bias == "Rechts":
+            rechts += 1
+        elif bias == "Centraal":
+            centraal += 1
+
+    print("Links:", links, "| Centraal:", centraal, "| Rechts:", rechts)
 
 
