@@ -1,12 +1,12 @@
 outlet_bias = {
     "NU": "Centraal",
     "Nos": "Centraal",
-    "Telegraaf": "Rechts",
+    "De Telegraaf": "Rechts",
     "Volkskrant": "Links",
     "AD:home": "Centraal",
     "Trouw": "Links",
-    "Parool": "Links",
-    "NRC": "Rechts",
+    "Parool: Voorpagina": "Links",
+    "Nieuws, achtergronden en onderzoeksjournalistiek - NRC": "Rechts",
     "RTL Nieuws": "Centraal",
     "Eenvandaag": "Centraal",
     "bnr - Home": "Rechts",
@@ -88,7 +88,12 @@ for cluster_id, items in clusters.items():
             rechts += 1
         elif bias == "Centraal":
             centraal += 1
+    Aantal_artikelen = links + rechts + centraal
+    Percentage_links = (links / Aantal_artikelen) * 100
+    Percentage_rechts = (rechts / Aantal_artikelen) * 100  
+    percentage_centraal = (centraal / Aantal_artikelen) * 100
 
     print("Links:", links, "| Centraal:", centraal, "| Rechts:", rechts)
+    print("Percentage Links:", round(Percentage_links, 2), "% | Percentage Centraal:", round(percentage_centraal, 2), "% | Percentage Rechts:", round(Percentage_rechts, 2), "%")
 
 
