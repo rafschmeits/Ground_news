@@ -22,6 +22,13 @@ rss_feeds = ['https://www.nu.nl/rss',
              'https://www.telegraaf.nl/rss/',
              'https://feeds.feedburner.com/nrc/FmXV']
 
+from transformers import pipeline
+
+summarizer = pipeline(
+    "text-generation",
+    model="google/flan-t5-base"
+)
+
 articles = []
 
 import feedparser
@@ -95,5 +102,20 @@ for cluster_id, items in clusters.items():
 
     print("Links:", links, "| Centraal:", centraal, "| Rechts:", rechts)
     print("Percentage Links:", round(Percentage_links, 2), "% | Percentage Centraal:", round(percentage_centraal, 2), "% | Percentage Rechts:", round(Percentage_rechts, 2), "%")
+    story_text = ""
+
+    for a in items:
+        story_text += a["title"] + ". " + a["text"] + "\n"
+
+    prompt = "Maak een neutrale nieuws samenvatting van de volgende artikelen:\n\n" + story_text
+
+    summary = summarizer(
+    prompt,
+    max_new_tokens=120,
+    do_sample=False
+    )
+
+    print("\nSamenvatting:")
+    print(summary[0]["generated_text"])
 
 
