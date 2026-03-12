@@ -107,11 +107,11 @@ for cluster_id, items in clusters.items():
     for a in items:
         story_text += a["title"] + ". " + a["text"] + "\n"
 
-    prompt = "Maak een neutrale nieuws samenvatting van de volgende artikelen:\n\n" + story_text
+    prompt = "Maak een korte, neutrale samenvatting van de volgende artikelen. Vermijd herhaling en beperk elk uniek feit tot één keer:\n\n" + story_text
 
     summary = summarizer(
     prompt,
-    max_new_tokens=120,
+    max_new_tokens=80,
     do_sample=False
     )
 
