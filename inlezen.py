@@ -26,7 +26,7 @@ from transformers import pipeline
 
 summarizer = pipeline(
     "text-generation",
-    model="google/flan-t5-base"
+    model="google/flan-t5-large"
 )
 
 articles = []
@@ -106,8 +106,8 @@ for cluster_id, items in clusters.items():
 
     for a in items:
         story_text += a["title"] + ". " + a["text"] + "\n"
-
-    prompt = "Maak een korte, neutrale samenvatting van de volgende artikelen. Vermijd herhaling en beperk elk uniek feit tot één keer:\n\n" + story_text
+    
+    prompt = "summarize the following news articles neutrally:\n" + story_text
 
     summary = summarizer(
     prompt,
@@ -116,6 +116,5 @@ for cluster_id, items in clusters.items():
     )
 
     print("\nSamenvatting:")
-    print(summary[0]["generated_text"])
-
+    print(summary[0]["generated_text"].replace("summarize the following news articles neutrally:\n", "").strip())
 
