@@ -107,14 +107,14 @@ for cluster_id, items in clusters.items():
     for a in items:
         story_text += a["title"] + ". " + a["text"] + "\n"
     
-    prompt = "summarize the following news articles neutrally:\n" + story_text
+    prompt = "summarize the following news articles neutrally dont repeat yourself:\n" + story_text
 
     summary = summarizer(
     prompt,
     max_new_tokens=80,
     do_sample=False
     )
-
+ 
     print("\nSamenvatting:")
-    print(summary[0]["generated_text"].replace("summarize the following news articles neutrally:\n", "").strip())
+    print(summary[0]["generated_text"].replace("summarize the following news articles neutrally dont repeat yourself:\n", "").strip())
 
