@@ -22,12 +22,10 @@ rss_feeds = ['https://www.nu.nl/rss',
              'https://www.telegraaf.nl/rss/',
              'https://feeds.feedburner.com/nrc/FmXV']
 
-from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-summarizer = pipeline(
-    "text-generation",
-    model="google/flan-t5-large"
-)
+tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-large")
+samenvating_model = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-large")
 
 articles = []
 
@@ -107,14 +105,17 @@ for cluster_id, items in clusters.items():
     for a in items:
         story_text += a["title"] + ". " + a["text"] + "\n"
     
-    prompt = "summarize the following news articles neutrally dont repeat yourself:\n" + story_text
+    prompt = "Summarize the following news articles dont repeat yourself and state the facts:\n\n" + story_text
 
-    summary = summarizer(
-    prompt,
-    max_new_tokens=80,
+    inputs = tokenizer(prompt, return_tensors="pt", truncation=True)
+
+    output = samenvating_model.generate(
+    **inputs,
+    max_new_tokens=100,
     do_sample=False
     )
- 
-    print("\nSamenvatting:")
-    print(summary[0]["generated_text"].replace("summarize the following news articles neutrally dont repeat yourself:\n", "").strip())
 
+    summary = tokenizer.decode(output[0], skip_special_tokens=True)
+
+    print("\nSamenvatting:")
+    print(summary)
